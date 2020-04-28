@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import styled from "@emotion/styled/macro";
 
 import Tabletop from "tabletop";
@@ -9,30 +9,28 @@ const Wrapper = styled.div`
   background: #282c34;
 `;
 
-const Header = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 15px;
-  background-color: #ffffff;
-`;
-
 const Title = styled.h1`
   margin: 0;
-  color: #282c34;
-  font-size: 22px;
+  color: rgb(255, 244, 14);
+  font-size: 30px;
+  margin-bottom: 40px;
 
   @media (max-width: 580px) {
-    font-size: 18px;
+    font-size: 25px;
   }
 `;
 
 const Button = styled.button`
-  background-color: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 4px;
+  border: 1px solid rgb(89, 89, 89);
+  background-color: transparent;
+  padding: 10px 15px;
+  margin-top: 25px;
+  border-radius: 10px;
   font-size: 20px;
   font-family: "Roboto", sans-serif;
+  color: rgb(255, 244, 14);
+  cursor: pointer;
+  outline: none;
 `;
 
 const Section = styled.section`
@@ -40,18 +38,20 @@ const Section = styled.section`
   height: 100vh;
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
+  padding: 0 15px;
 `;
 
 const Sentence = styled.div`
+  border: 1px solid rgb(89, 89, 89);
+  border-radius: 10px;
+  background: rgb(62, 64, 69);
   font-family: "Roboto", sans-serif;
   font-size: 22px;
-  color: #ffffff;
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: auto;
-  padding: 0 25px;
+  color: rgb(255, 244, 14);
+  padding: 25px;
+  height: 125px;
 
   @media (max-width: 580px) {
     font-size: 16px;
@@ -59,8 +59,9 @@ const Sentence = styled.div`
 `;
 
 const App = () => {
-  const [words, setWords] = useState([]);
+  const [words, setWords] = useState({});
   const [sentence, setSentence] = useState("");
+  const firstLoad = useRef(true);
 
   const filterWords = (arr) => {
     const nouns = arr.map((obj) => obj.Nouns);
@@ -98,15 +99,22 @@ const App = () => {
     setSentence(content);
   }, [words]);
 
+  useEffect(() => {
+    if (firstLoad && Object.keys(words).length !== 0) {
+      handleSentenceGen();
+      firstLoad.current = false;
+    }
+  }, [firstLoad, words, handleSentenceGen]);
+
   return (
     <Wrapper>
-      <Header>
-        <Title>Sentence Generator</Title>
-        <Button onClick={handleSentenceGen}>Refresh</Button>
-      </Header>
-      <Section>
-        <Sentence>{sentence}</Sentence>
-      </Section>
+      {Object.keys(words).length !== 0 && (
+        <Section>
+          <Title>SENTENCE GENERATOR</Title>
+          <Sentence>{sentence}</Sentence>
+          <Button onClick={handleSentenceGen}>GET A NEW SENTENCE</Button>
+        </Section>
+      )}
     </Wrapper>
   );
 };
