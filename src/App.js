@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { Animated } from "react-animated-css";
 import styled from "@emotion/styled/macro";
 
 import Tabletop from "tabletop";
@@ -12,19 +13,19 @@ const Wrapper = styled.div`
 const Title = styled.h1`
   margin: 0;
   color: rgb(255, 244, 14);
-  font-size: 30px;
-  margin-bottom: 40px;
+  font-size: 60px;
+  position: relative;
+  z-index: 99999;
 
-  @media (max-width: 580px) {
-    font-size: 25px;
+  @media (max-width: 768px) {
+    font-size: 8vw;
   }
 `;
 
 const Button = styled.button`
   border: 1px solid rgb(89, 89, 89);
   background-color: transparent;
-  padding: 10px 15px;
-  margin-top: 25px;
+  padding: 15px 25px;
   border-radius: 10px;
   font-size: 20px;
   font-family: "Roboto", sans-serif;
@@ -36,6 +37,8 @@ const Button = styled.button`
 const Section = styled.section`
   background: #282c34;
   height: 100vh;
+  max-width: 1180px;
+  margin: 0 auto;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -52,6 +55,11 @@ const Sentence = styled.div`
   color: rgb(255, 244, 14);
   padding: 25px;
   height: 125px;
+  margin: 100px 0;
+  position: relative;
+  z-index: 0;
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2),
+    0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
 
   @media (max-width: 580px) {
     font-size: 16px;
@@ -61,7 +69,11 @@ const Sentence = styled.div`
 const App = () => {
   const [words, setWords] = useState({});
   const [sentence, setSentence] = useState("");
+  const [isVisible, setIsVisible] = useState(true);
   const firstLoad = useRef(true);
+  const boxShadow = isVisible
+    ? "0 5px 5px -1px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12)"
+    : "0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 12px 0 rgba(0, 0, 0, 0.12)";
 
   const filterWords = (arr) => {
     const nouns = arr.map((obj) => obj.Nouns);
@@ -99,6 +111,14 @@ const App = () => {
     setSentence(content);
   }, [words]);
 
+  const handleClick = () => {
+    setIsVisible(false);
+    setTimeout(() => {
+      setIsVisible(true);
+    }, 400);
+    handleSentenceGen();
+  };
+
   useEffect(() => {
     if (firstLoad && Object.keys(words).length !== 0) {
       handleSentenceGen();
@@ -111,8 +131,16 @@ const App = () => {
       {Object.keys(words).length !== 0 && (
         <Section>
           <Title>SENTENCE GENERATOR</Title>
-          <Sentence>{sentence}</Sentence>
-          <Button onClick={handleSentenceGen}>GET A NEW SENTENCE</Button>
+          <Animated
+            animationIn="rollIn"
+            animationOut="rollOut"
+            isVisible={isVisible}
+          >
+            <Sentence>{sentence}</Sentence>
+          </Animated>
+          <Button onClick={handleClick} style={{ boxShadow }}>
+            GET A NEW SENTENCE
+          </Button>
         </Section>
       )}
     </Wrapper>
