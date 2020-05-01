@@ -67,13 +67,10 @@ const LandScapeSection = styled(Section)`
   }
 `;
 
-const Sentence = styled.div`
+const Box = styled.div`
   border: 1px solid rgb(89, 89, 89);
   border-radius: 10px;
   background: rgb(62, 64, 69);
-  font-family: "Roboto", sans-serif;
-  font-size: 22px;
-  color: rgb(255, 244, 14);
   padding: 25px;
   height: 125px;
   margin: 100px 0;
@@ -81,14 +78,20 @@ const Sentence = styled.div`
   z-index: 0;
   box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2),
     0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
+`;
+
+const LandScapeBox = styled(Box)`
+  margin: 50px 0;
+`;
+
+const Sentence = styled.div`
+  font-family: "Roboto", sans-serif;
+  font-size: 22px;
+  color: #eeeeee;
 
   @media (max-width: 580px) {
     font-size: 16px;
   }
-`;
-
-const LandScapeSentence = styled(Sentence)`
-  margin: 50px 0;
 `;
 
 const App = () => {
@@ -136,10 +139,12 @@ const App = () => {
 
   const handleClick = () => {
     setIsVisible(false);
-    setTimeout(() => setIsVisible(true), 400);
+    setTimeout(() => {
+      setIsVisible(true);
+      handleSentenceGen();
+    }, 400);
     setIsFocused(true);
     setTimeout(() => setIsFocused(false), 200);
-    handleSentenceGen();
   };
 
   useEffect(() => {
@@ -163,7 +168,15 @@ const App = () => {
                     animationOut="fadeOutRight"
                     isVisible={isVisible}
                   >
-                    <LandScapeSentence>{sentence}</LandScapeSentence>
+                    <LandScapeBox>
+                      <Animated
+                        animationIn="fadeIn"
+                        animationOut="fadeOut"
+                        isVisible={isVisible}
+                      >
+                        <Sentence>{sentence}</Sentence>
+                      </Animated>
+                    </LandScapeBox>
                   </Animated>
                   <Button onClick={handleClick} isFocused={isFocused}>
                     GET A NEW SENTENCE
@@ -178,7 +191,15 @@ const App = () => {
                     animationOut="fadeOutRight"
                     isVisible={isVisible}
                   >
-                    <Sentence>{sentence}</Sentence>
+                    <Box>
+                      <Animated
+                        animationIn="fadeIn"
+                        animationOut="fadeOut"
+                        isVisible={isVisible}
+                      >
+                        <Sentence>{sentence}</Sentence>
+                      </Animated>
+                    </Box>
                   </Animated>
                   <Button onClick={handleClick} isFocused={isFocused}>
                     GET A NEW SENTENCE
@@ -197,7 +218,15 @@ const App = () => {
                 animationOut="fadeOutRight"
                 isVisible={isVisible}
               >
-                <Sentence>{sentence}</Sentence>
+                <Box>
+                  <Animated
+                    animationIn="fadeIn"
+                    animationOut="fadeOut"
+                    isVisible={isVisible}
+                  >
+                    <Sentence>{sentence}</Sentence>
+                  </Animated>
+                </Box>
               </Animated>
               <Button onClick={handleClick} isFocused={isFocused}>
                 GET A NEW SENTENCE
