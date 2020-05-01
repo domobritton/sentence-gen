@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import DeviceOrientation, { Orientation } from "react-screen-orientation";
+import { isMobile, isBrowser } from "react-device-detect";
 import { Animated } from "react-animated-css";
 import styled from "@emotion/styled/macro";
 
@@ -18,7 +20,14 @@ const Title = styled.h1`
   z-index: 99999;
 
   @media (max-width: 768px) {
-    font-size: 8vw;
+    font-size: 7vw;
+  }
+`;
+
+const LandScapeTitle = styled(Title)`
+  font-size: 40px;
+  @media (max-width: 768px) {
+    font-size: 6vw;
   }
 `;
 
@@ -32,6 +41,11 @@ const Button = styled.button`
   color: rgb(255, 244, 14);
   cursor: pointer;
   outline: none;
+  transition: box-shadow 100ms ease-in-out;
+  box-shadow: ${({ isFocused }) =>
+    isFocused
+      ? "0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 12px 0 rgba(0, 0, 0, 0.12)"
+      : "0 5px 5px -1px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12)"};
 `;
 
 const Section = styled.section`
@@ -44,6 +58,13 @@ const Section = styled.section`
   flex-direction: column;
   align-items: center;
   padding: 0 15px;
+`;
+
+const LandScapeSection = styled(Section)`
+  @media (max-width: 1020px) {
+    height: auto;
+    padding: 40px 15px;
+  }
 `;
 
 const Sentence = styled.div`
@@ -66,14 +87,16 @@ const Sentence = styled.div`
   }
 `;
 
+const LandScapeSentence = styled(Sentence)`
+  margin: 50px 0;
+`;
+
 const App = () => {
   const [words, setWords] = useState({});
   const [sentence, setSentence] = useState("");
   const [isVisible, setIsVisible] = useState(true);
+  const [isFocused, setIsFocused] = useState(false);
   const firstLoad = useRef(true);
-  const boxShadow = isVisible
-    ? "0 5px 5px -1px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12)"
-    : "0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 12px 0 rgba(0, 0, 0, 0.12)";
 
   const filterWords = (arr) => {
     const nouns = arr.map((obj) => obj.Nouns);
@@ -113,9 +136,9 @@ const App = () => {
 
   const handleClick = () => {
     setIsVisible(false);
-    setTimeout(() => {
-      setIsVisible(true);
-    }, 400);
+    setTimeout(() => setIsVisible(true), 400);
+    setIsFocused(true);
+    setTimeout(() => setIsFocused(false), 200);
     handleSentenceGen();
   };
 
@@ -128,21 +151,61 @@ const App = () => {
 
   return (
     <Wrapper>
-      {Object.keys(words).length !== 0 && (
-        <Section>
-          <Title>SENTENCE GENERATOR</Title>
-          <Animated
-            animationIn="rollIn"
-            animationOut="rollOut"
-            isVisible={isVisible}
-          >
-            <Sentence>{sentence}</Sentence>
-          </Animated>
-          <Button onClick={handleClick} style={{ boxShadow }}>
-            GET A NEW SENTENCE
-          </Button>
-        </Section>
-      )}
+      <DeviceOrientation>
+        <Orientation orientation="landscape" alwaysRender={false}>
+          {Object.keys(words).length !== 0 && (
+            <>
+              {isMobile && (
+                <LandScapeSection>
+                  <LandScapeTitle>SENTENCE GENERATOR</LandScapeTitle>
+                  <Animated
+                    animationIn="fadeInLeft"
+                    animationOut="fadeOutRight"
+                    isVisible={isVisible}
+                  >
+                    <LandScapeSentence>{sentence}</LandScapeSentence>
+                  </Animated>
+                  <Button onClick={handleClick} isFocused={isFocused}>
+                    GET A NEW SENTENCE
+                  </Button>
+                </LandScapeSection>
+              )}
+              {isBrowser && (
+                <Section>
+                  <Title>SENTENCE GENERATOR</Title>
+                  <Animated
+                    animationIn="fadeInLeft"
+                    animationOut="fadeOutRight"
+                    isVisible={isVisible}
+                  >
+                    <Sentence>{sentence}</Sentence>
+                  </Animated>
+                  <Button onClick={handleClick} isFocused={isFocused}>
+                    GET A NEW SENTENCE
+                  </Button>
+                </Section>
+              )}
+            </>
+          )}
+        </Orientation>
+        <Orientation orientation="portrait" alwaysRender={false}>
+          {Object.keys(words).length !== 0 && (
+            <Section>
+              <Title>SENTENCE GENERATOR</Title>
+              <Animated
+                animationIn="fadeInLeft"
+                animationOut="fadeOutRight"
+                isVisible={isVisible}
+              >
+                <Sentence>{sentence}</Sentence>
+              </Animated>
+              <Button onClick={handleClick} isFocused={isFocused}>
+                GET A NEW SENTENCE
+              </Button>
+            </Section>
+          )}
+        </Orientation>
+      </DeviceOrientation>
     </Wrapper>
   );
 };

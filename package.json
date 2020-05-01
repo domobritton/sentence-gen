@@ -10,7 +10,9 @@
     "@testing-library/user-event": "^7.1.2",
     "react": "^16.13.1",
     "react-animated-css": "^1.2.1",
+    "react-device-detect": "^1.12.1",
     "react-dom": "^16.13.1",
+    "react-screen-orientation": "0.0.4",
     "react-scripts": "3.4.1",
     "tabletop": "^1.6.3",
     "typeface-roboto": "0.0.75"
