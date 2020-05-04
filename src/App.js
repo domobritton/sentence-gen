@@ -58,9 +58,11 @@ const Section = styled.section`
   flex-direction: column;
   align-items: center;
   padding: 0 15px;
+  overflow: hidden;
 `;
 
 const LandScapeSection = styled(Section)`
+  overflow-y: auto;
   @media (max-width: 1020px) {
     height: auto;
     padding: 40px 15px;
@@ -102,12 +104,38 @@ const App = () => {
   const firstLoad = useRef(true);
 
   const filterWords = (arr) => {
-    const nouns = arr.map((obj) => obj.Nouns);
-    const verbs = arr.map((obj) => obj.Verbs);
-    const adjectives = arr.map((obj) => obj.Adjectives);
-    const adverbs = arr.map((obj) => obj.Adverbs);
-    const preposition = arr.map((obj) => obj.Preposition);
-    setWords({ nouns, verbs, adjectives, adverbs, preposition });
+    const nouns = arr.map((obj) => {
+      console.log(obj.Nouns);
+      if (obj.Nouns.length !== 0) {
+        return obj.Nouns;
+      }
+    });
+    const verbs = arr.map((obj) => {
+      if (obj.Verbs.length !== 0) {
+        return obj.Verbs;
+      }
+    });
+    const adjectives = arr.map((obj) => {
+      if (obj.Adjectives.length !== 0) {
+        return obj.Adjectives;
+      }
+    });
+    const adverbs = arr.map((obj) => {
+      if (obj.Adverbs.length !== 0) {
+        return obj.Adverbs;
+      }
+    });
+    const preposition = arr.map((obj) => {
+      if (obj.Preposition.length !== 0) {
+        return obj.Preposition;
+      }
+    });
+    const sentStart = arr.map((obj) => {
+      if (obj.SentenceStart.length !== 0) {
+        return obj.SentenceStart;
+      }
+    });
+    setWords({ sentStart, nouns, verbs, adjectives, adverbs, preposition });
   };
 
   useEffect(() => {
@@ -121,19 +149,32 @@ const App = () => {
   }, []);
 
   const handleSentenceGen = useCallback(() => {
-    const { nouns, verbs, adjectives, adverbs, preposition } = words;
-    const sentenceStartArr = ["The", "Their", "His", "Her", "A"];
-    const length = nouns.length;
-    const rand1 = Math.floor(Math.random() * length);
-    const rand2 = Math.floor(Math.random() * length);
-    const rand3 = Math.floor(Math.random() * length);
-    const rand4 = Math.floor(Math.random() * length);
-    const rand5 = Math.floor(Math.random() * length);
-    const rand6 = Math.floor(Math.random() * length);
-    const rand7 = Math.floor(Math.random() * 5);
-    const sentenceStart = sentenceStartArr[rand7];
+    const { sentStart, nouns, verbs, adjectives, adverbs, preposition } = words;
 
-    const content = `${sentenceStart} ${adjectives[rand1]} ${nouns[rand2]} ${adverbs[rand3]} ${verbs[rand4]} because some ${nouns[rand1]} ${adverbs[rand1]} ${verbs[rand1]} ${preposition[rand1]} a ${adjectives[rand2]} ${nouns[rand5]} which, became a ${adjectives[rand3]}, ${adjectives[rand4]} ${nouns[rand6]}.`;
+    const filterSentStart = sentStart.filter((x) => x !== undefined);
+    const filterNouns = nouns.filter((x) => x !== undefined);
+    const filterVerbs = verbs.filter((x) => x !== undefined);
+    const filterAdj = adjectives.filter((x) => x !== undefined);
+    const filterAdv = adverbs.filter((x) => x !== undefined);
+    const filterPrep = preposition.filter((x) => x !== undefined);
+
+    const sentStartLength = filterSentStart.length;
+    const nounsLength = filterNouns.length;
+    const verbsLength = filterVerbs.length;
+    const adjectivesLength = filterAdj.length;
+    const adverbsLength = filterAdv.length;
+    const prepLength = filterPrep.length;
+    const rand1 = Math.floor(Math.random() * nounsLength);
+    const rand2 = Math.floor(Math.random() * verbsLength);
+    const rand3 = Math.floor(Math.random() * adjectivesLength);
+    const rand4 = Math.floor(Math.random() * adverbsLength);
+    const rand5 = Math.floor(Math.random() * prepLength);
+    const rand6 = Math.floor(Math.random() * nounsLength);
+    const rand7 = Math.floor(Math.random() * sentStartLength);
+    console.log(filterSentStart);
+    const sentenceStart = filterSentStart[rand7];
+
+    const content = `${sentenceStart} ${filterAdj[rand1]} ${filterNouns[rand2]} ${filterAdv[rand3]} ${filterVerbs[rand4]} because some ${filterNouns[rand1]} ${filterAdv[rand1]} ${filterVerbs[rand1]} ${filterPrep[rand1]} a ${filterAdj[rand2]} ${filterNouns[rand5]} which, became a ${filterAdj[rand3]}, ${filterAdj[rand4]} ${filterNouns[rand6]}.`;
     setSentence(content);
   }, [words]);
 
