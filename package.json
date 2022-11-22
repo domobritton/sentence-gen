@@ -13,7 +13,7 @@
     "react-device-detect": "^1.12.1",
     "react-dom": "^16.13.1",
     "react-screen-orientation": "0.0.4",
-    "react-scripts": "3.4.1",
+    "react-scripts": "5.0.1",
     "tabletop": "^1.6.3",
     "typeface-roboto": "0.0.75"
   },
